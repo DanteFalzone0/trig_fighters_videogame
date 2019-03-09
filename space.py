@@ -148,6 +148,10 @@ score = 0
 
 mode = 0
 
+seconds = 0
+dekaseconds = 3
+minutes = 2
+
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -156,7 +160,7 @@ while True:
             pygame.quit()
             sys.exit()
 
-    pygame.display.set_caption("Space by Dante Falzone")
+    pygame.display.set_caption("Trigonometry Fighters by Dante Falzone")
 
     SURF.fill((0, 0, 0)) # Clear the screen
 
@@ -168,6 +172,9 @@ while True:
     if mode == 3:
         label = myfont.render("Computer wins!", 3, (255, 10, 0))
         SURF.blit(label, (440, 280))
+    if mode == 4:
+        label = myfont.render("Perfect tie!", 3, (80, 80, 100))
+        SURF.blit(label, (445, 280))
     if mode == 1:
         draw_ship(x_pos, y_pos, angle)
 
@@ -260,18 +267,31 @@ while True:
                     score -= 1
 
         label0 = myfont.render("Score: " + str(score), 3, (0, 255, 80))
+        label1 = myfont.render(str(minutes) + ":" + str(dekaseconds) + str(seconds), 3, (0, 255, 80))
         SURF.blit(label0, (30, 570))
-
-        if score >= 100:
-            mode += 1
-
-        if score <= -15:
-            mode += 2
+        SURF.blit(label1, (800, 570))
 
         if cycle <= 60:
             cycle += 1
         else:
             cycle = 0
+            seconds -= 1
+
+        if seconds == -1:
+            if minutes != 0 or dekaseconds != 0:
+                dekaseconds -= 1
+                seconds = 9
+            else:
+                if score > 0:
+                    mode += 1
+                elif score < 0:
+                    mode += 2
+                else:
+                    mode += 3
+
+        if dekaseconds == -1:
+            minutes -= 1
+            dekaseconds = 5
 
     elif mode == 0:
         label1 = myfont.render("Instructions", 3, (0, 255, 80))
@@ -281,8 +301,8 @@ while True:
         label5 = myfont.render("You are trying to shoot the red ship and avoid getting shot.", 3, (0, 255, 80))
         label6 = myfont.render("Each time you hit them, your score (bottom left corner) increases by one." , 3, (0, 255, 80))
         label7 = myfont.render("Each time you're hit, your score goes down by one.", 3, (0, 255, 80))
-        label71 = myfont.render("If your score goes above 100, you win.", 3, (255, 10, 0))
-        label72 = myfont.render("If your score goes below -15, you lose.", 3, (255, 10, 0))
+        label71 = myfont.render("If your score is positive when the clock runs out, you win.", 3, (255, 10, 0))
+        label72 = myfont.render("If your score is negative when the clock runs out, you lose.", 3, (255, 10, 0))
         label8 = myfont.render("PRESS X TO START", 3, (255, 10, 0))
 
         SURF.blit(label1, (400, 30))
