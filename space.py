@@ -144,19 +144,21 @@ cycle = 0
 
 add = 1.8
 
-score = 0
+green_score = 0
+red_score   = 0
 
 mode = 0
 
 seconds = 0
-dekaseconds = 3
-minutes = 2
+dekaseconds = 0
+minutes = 1 # Amount of time left in game
 
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
             print("Green fired " + str(len(bullet_angles)) + " shots")
             print("Red fired "   + str(len(enemybtv))      + " shots")
+            print("Score ratio: for every point you scored, your enemy scored " + str(red_score/green_score) + " points") 
             pygame.quit()
             sys.exit()
 
@@ -223,7 +225,7 @@ while True:
 
 
         if keys[K_SPACE]:
-            if cycle / 10 == cycle // 10:
+            if cycle / 20 == cycle // 20:
                 bullet_y_vals.append(y_pos)
                 bullet_x_vals.append(x_pos)
                 bullet_angles.append(angle)
@@ -235,7 +237,7 @@ while True:
         enemy_x_pos = ((99 * enemy_x_pos) + x_pos) / 100
         enemy_y_pos = ((99 * enemy_y_pos) + y_pos) / 100
 
-        if cycle / 20 == cycle // 20:
+        if cycle / 20 == cycle // 20 or cycle == 35:
             enemybyv.append(enemy_y_pos)
             enemybxv.append(enemy_x_pos)
             enemybtv.append(enemy_t)
@@ -256,7 +258,7 @@ while True:
                 bullet_y_vals[n] -= shift(10, 10, bullet_angles[n] + 44.77, "y")
                 if enemy_x_pos - 16 < bullet_x_vals[n] < enemy_x_pos + 16:
                     if enemy_y_pos - 16 < bullet_y_vals[n] < enemy_y_pos + 16:
-                        score += 1
+                        green_score += 1
 
         if enemybtv:
             for n in range (0, len(enemybtv) - 1):
@@ -264,12 +266,15 @@ while True:
                 enemybxv[n] -= shift(10, 10, enemybtv[n] + 44.77, "x")
                 enemybyv[n] -= shift(10, 10, enemybtv[n] + 44.77, "y")
                 if x_pos - 16 < enemybxv[n] < x_pos + 16 and y_pos - 16 < enemybyv[n] < y_pos + 16:
-                    score -= 1
+                    red_score += 1
 
-        label0 = myfont.render("Score: " + str(score), 3, (0, 255, 80))
+        label0_g = myfont.render("Your Score: " + str(green_score), 3, (0, 255, 80))
+        label0_r = myfont.render("Enemy's Score: " + str(red_score), 3, (255, 10, 0))
+
         label1 = myfont.render(str(minutes) + ":" + str(dekaseconds) + str(seconds), 3, (0, 255, 80))
-        SURF.blit(label0, (30, 570))
-        SURF.blit(label1, (800, 570))
+        SURF.blit(label0_g, (30, 540))
+        SURF.blit(label0_r, (30, 570))
+        SURF.blit(label1, (850, 570))
 
         if cycle <= 60:
             cycle += 1
@@ -282,9 +287,9 @@ while True:
                 dekaseconds -= 1
                 seconds = 9
             else:
-                if score > 0:
+                if green_score > red_score:
                     mode += 1
-                elif score < 0:
+                elif green_score < red_score:
                     mode += 2
                 else:
                     mode += 3
@@ -299,10 +304,11 @@ while True:
         label3 = myfont.render("Thruster: up arrow key", 3, (0, 255, 80))
         label4 = myfont.render("Plasma Cannon: spacebar", 3, (0, 255, 80))
         label5 = myfont.render("You are trying to shoot the red ship and avoid getting shot.", 3, (0, 255, 80))
-        label6 = myfont.render("Each time you hit them, your score (bottom left corner) increases by one." , 3, (0, 255, 80))
-        label7 = myfont.render("Each time you're hit, your score goes down by one.", 3, (0, 255, 80))
-        label71 = myfont.render("If your score is positive when the clock runs out, you win.", 3, (255, 10, 0))
-        label72 = myfont.render("If your score is negative when the clock runs out, you lose.", 3, (255, 10, 0))
+        label6 = myfont.render("Each time you hit them, your score increases by one." , 3, (0, 255, 80))
+        label7 = myfont.render("Each time they hit you, their score increases by one.", 3, (0, 255, 80))
+        label71 = myfont.render("If your score is higher when the clock runs out, you win.", 3, (255, 10, 0))
+        label72 = myfont.render("If your score is lower when the clock runs out, you lose.", 3, (255, 10, 0))
+        label73 = myfont.render("You  have one minute to land more shots on the enemy ship than it lands on you.", 3, (255, 10, 0))
         label8 = myfont.render("PRESS X TO START", 3, (255, 10, 0))
 
         SURF.blit(label1, (400, 30))
@@ -314,7 +320,8 @@ while True:
         SURF.blit(label7, (30, 220))
         SURF.blit(label71,(30, 260))
         SURF.blit(label72,(30, 290))
-        SURF.blit(label8, (30, 330))
+        SURF.blit(label73,(30, 330))
+        SURF.blit(label8, (30, 380))
 
         if keys[K_x]:
             mode += 1
