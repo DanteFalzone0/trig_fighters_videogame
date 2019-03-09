@@ -145,7 +145,7 @@ cycle = 0
 add = 1.8
 
 green_score = 0
-red_score   = 0
+red_score   = 0 # These are the score counters for the two ships
 
 mode = 0
 
